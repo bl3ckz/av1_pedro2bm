@@ -10,24 +10,40 @@ generator client {
 
 datasource db {
   provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
 // Modelo de Tarefa
-model Task {
-  id          Int      @id @default(autoincrement())
-  title       String
-  description String?
-  completed   Boolean  @default(false)
-  createdAt   DateTime @default(now())
+model Tarefa {
+  id        Int      @id @default(autoincrement())
+  descricao String
+  concluida Boolean  @default(false)
+  createdAt DateTime @default(now())
 
   // Relacionamento com Categoria
-  categoryId Int?
-  category   Category? @relation(fields: [categoryId], references: [id])
+  categoriaId Int?
+  categoria   Categoria? @relation(fields: [categoriaId], references: [id])
 }
 
 // Modelo de Categoria (Flexibilidade de temas)
-model Category {
-  id    Int    @id @default(autoincrement())
-  name  String @unique
-  tasks Task[]
+model Categoria {
+  id      Int      @id @default(autoincrement())
+  nome    String   @unique
+  tarefas Tarefa[]
+}
+
+// Modelo de Filme — melhores filmes com informações completas
+model Filme {
+  id            Int      @id @default(autoincrement())
+  titulo        String
+  genero        String?
+  diretor       String?
+  anoLancamento Int?
+  descricao     String?  @db.LongText
+  nota          Float?
+  duracao       Int? // em minutos
+  atorPrincipal String?
+  pais          String?
+  criadoEm      DateTime @default(now())
+  atualizadoEm  DateTime @updatedAt
 }

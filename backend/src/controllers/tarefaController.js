@@ -13,8 +13,8 @@ import * as TarefaModel from "../models/tarefaModel.js";
  * Retorna todas as tarefas em formato JSON
  * @route GET /tarefas
  */
-export function listarTarefas(req, res) {
-  const tarefas = TarefaModel.obterTodasTarefas();
+export async function listarTarefas(req, res) {
+  const tarefas = await TarefaModel.obterTodasTarefas();
   res.json(tarefas);
 }
 
@@ -22,7 +22,7 @@ export function listarTarefas(req, res) {
  * Retorna uma tarefa específica com base no id enviado na URL
  * @route GET /tarefas/:id
  */
-export function obterTarefa(req, res) {
+export async function obterTarefa(req, res) {
   // Converte o id recebido pela URL para número
   const idNumero = Number(req.params.id);
 
@@ -32,7 +32,7 @@ export function obterTarefa(req, res) {
   }
 
   // Busca a tarefa pelo id no Model
-  const tarefa = TarefaModel.obterTarefaPorId(idNumero);
+  const tarefa = await TarefaModel.obterTarefaPorId(idNumero);
 
   // Se não encontrar, retorna erro 404
   if (!tarefa) {
@@ -47,7 +47,7 @@ export function obterTarefa(req, res) {
  * Cria uma nova tarefa
  * @route POST /tarefas
  */
-export function criarTarefa(req, res) {
+export async function criarTarefa(req, res) {
   // Pega a descrição enviada no corpo da requisição
   const { descricao } = req.body;
 
@@ -57,7 +57,7 @@ export function criarTarefa(req, res) {
   }
 
   // Cria a nova tarefa através do Model
-  const tarefaCriada = TarefaModel.criarNovaTarefa(descricao);
+  const tarefaCriada = await TarefaModel.criarNovaTarefa(descricao);
 
   // Retorna status 201 (criado com sucesso)
   res.status(201).json({
@@ -70,7 +70,7 @@ export function criarTarefa(req, res) {
  * Atualiza parcialmente uma tarefa existente
  * @route PATCH /tarefas/:id
  */
-export function atualizarTarefa(req, res) {
+export async function atualizarTarefa(req, res) {
   // Converte o id da URL para número
   const idNumero = Number(req.params.id);
 
@@ -96,7 +96,7 @@ export function atualizarTarefa(req, res) {
   }
 
   // Tenta atualizar a tarefa através do Model
-  const tarefaAtualizada = TarefaModel.atualizarTarefa(
+  const tarefaAtualizada = await TarefaModel.atualizarTarefa(
     idNumero,
     descricao,
     concluida
@@ -118,7 +118,7 @@ export function atualizarTarefa(req, res) {
  * Remove uma tarefa pelo id
  * @route DELETE /tarefas/:id
  */
-export function excluirTarefa(req, res) {
+export async function excluirTarefa(req, res) {
   // Converte o id da URL para número
   const idNumero = Number(req.params.id);
 
@@ -128,7 +128,7 @@ export function excluirTarefa(req, res) {
   }
 
   // Tenta excluir a tarefa através do Model
-  const tarefaRemovida = TarefaModel.excluirTarefa(idNumero);
+  const tarefaRemovida = await TarefaModel.excluirTarefa(idNumero);
 
   // Se não encontrar, retorna erro 404
   if (!tarefaRemovida) {
