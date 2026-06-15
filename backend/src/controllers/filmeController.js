@@ -14,6 +14,23 @@ function validarTexto(texto) {
   return typeof texto === "string" && texto.trim() !== "";
 }
 
+function textoOpcional(texto) {
+  if (texto === undefined || texto === null) {
+    return null;
+  }
+
+  const textoLimpo = String(texto).trim();
+  return textoLimpo === "" ? null : textoLimpo;
+}
+
+function validarNumero(numero) {
+  return typeof numero === "number" && !isNaN(numero);
+}
+
+function validarBooleano(valor) {
+  return typeof valor === "boolean";
+}
+
 function montarDadosFilme(body) {
   const dados = {};
 
@@ -30,37 +47,71 @@ function montarDadosFilme(body) {
   }
 
   if (body.anoLancamento !== undefined) {
-    dados.anoLancamento = body.anoLancamento;
+    dados.anoLancamento = Number(body.anoLancamento);
   }
 
   if (body.descricao !== undefined) {
-    dados.descricao = body.descricao.trim();
+    dados.descricao = textoOpcional(body.descricao);
   }
 
   if (body.nota !== undefined) {
-    dados.nota = body.nota;
+    dados.nota = Number(body.nota);
   }
 
   if (body.duracao !== undefined) {
-    dados.duracao = body.duracao;
+    dados.duracao = Number(body.duracao);
   }
 
-  if (body.atorPrincipal !== undefined) {
-    dados.atorPrincipal = body.atorPrincipal.trim();
+  if (body.elenco !== undefined) {
+    dados.elenco = textoOpcional(body.elenco);
   }
 
-  if (body.pais !== undefined) {
-    dados.pais = body.pais.trim();
+  if (body.classificacao !== undefined) {
+    dados.classificacao = body.classificacao.trim();
+  }
+
+  if (body.imagem !== undefined) {
+    dados.imagem = textoOpcional(body.imagem);
+  }
+
+  if (body.disponivel !== undefined) {
+    dados.disponivel = Boolean(body.disponivel);
   }
 
   return dados;
 }
 
-function validarCamposFilme(body, { obrigatorioTitulo = false } = {}) {
+function validarCamposFilme(body, { obrigatorios = [] } = {}) {
   const erros = [];
 
-  if (obrigatorioTitulo && !validarTexto(body.titulo)) {
-    erros.push("titulo é obrigatório");
+  // Validações obrigatórias
+  if (obrigatorios.includes("titulo") && !validarTexto(body.titulo)) {
+    erros.push("titulo é obrigatório e deve ser texto válido");
+  }
+
+  if (obrigatorios.includes("genero") && !validarTexto(body.genero)) {
+    erros.push("genero é obrigatório e deve ser texto válido");
+  }
+
+  if (obrigatorios.includes("diretor") && !validarTexto(body.diretor)) {
+    erros.push("diretor é obrigatório e deve ser texto válido");
+  }
+
+  if (obrigatorios.includes("anoLancamento") && !validarNumero(body.anoLancamento)) {
+    erros.push("anoLancamento é obrigatório e deve ser número inteiro");
+  }
+
+  if (obrigatorios.includes("duracao") && !validarNumero(body.duracao)) {
+    erros.push("duracao é obrigatória e deve ser número inteiro");
+  }
+
+  if (obrigatorios.includes("classificacao") && !validarTexto(body.classificacao)) {
+    erros.push("classificacao é obrigatória e deve ser texto válido");
+  }
+
+  // Validações opcionais (quando presentes)
+  if (body.titulo !== undefined && !validarTexto(body.titulo)) {
+    erros.push("titulo deve ser texto válido");
   }
 
   if (body.genero !== undefined && !validarTexto(body.genero)) {
@@ -71,28 +122,36 @@ function validarCamposFilme(body, { obrigatorioTitulo = false } = {}) {
     erros.push("diretor deve ser texto válido");
   }
 
-  if (body.anoLancamento !== undefined && !Number.isInteger(body.anoLancamento)) {
-    erros.push("anoLancamento deve ser inteiro");
+  if (body.anoLancamento !== undefined && !validarNumero(body.anoLancamento)) {
+    erros.push("anoLancamento deve ser número");
   }
 
-  if (body.descricao !== undefined && !validarTexto(body.descricao)) {
+  if (body.descricao !== undefined && String(body.descricao).trim() !== "" && !validarTexto(body.descricao)) {
     erros.push("descricao deve ser texto válido");
   }
 
-  if (body.nota !== undefined && typeof body.nota !== "number") {
+  if (body.nota !== undefined && !validarNumero(body.nota)) {
     erros.push("nota deve ser número");
   }
 
-  if (body.duracao !== undefined && !Number.isInteger(body.duracao)) {
-    erros.push("duracao deve ser inteiro");
+  if (body.duracao !== undefined && !validarNumero(body.duracao)) {
+    erros.push("duracao deve ser número");
   }
 
-  if (body.atorPrincipal !== undefined && !validarTexto(body.atorPrincipal)) {
-    erros.push("atorPrincipal deve ser texto válido");
+  if (body.elenco !== undefined && String(body.elenco).trim() !== "" && !validarTexto(body.elenco)) {
+    erros.push("elenco deve ser texto válido");
   }
 
-  if (body.pais !== undefined && !validarTexto(body.pais)) {
-    erros.push("pais deve ser texto válido");
+  if (body.classificacao !== undefined && !validarTexto(body.classificacao)) {
+    erros.push("classificacao deve ser texto válido");
+  }
+
+  if (body.imagem !== undefined && String(body.imagem).trim() !== "" && !validarTexto(body.imagem)) {
+    erros.push("imagem deve ser texto válido");
+  }
+
+  if (body.disponivel !== undefined && !validarBooleano(body.disponivel)) {
+    erros.push("disponivel deve ser booleano");
   }
 
   return erros;
@@ -129,12 +188,46 @@ export async function buscarPorId(req, res) {
   }
 }
 
+export async function buscarPorGenero(req, res) {
+  try {
+    const { genero } = req.params;
+
+    if (!validarTexto(genero)) {
+      return res.status(400).json({ erro: "Gênero inválido" });
+    }
+
+    const filmes = await FilmeModel.buscarPorGenero(genero);
+    return res.json(filmes);
+  } catch (error) {
+    console.error("Erro ao buscar filmes por gênero:", error);
+    return res.status(500).json({ erro: "Erro interno ao buscar filmes por gênero" });
+  }
+}
+
+export async function buscarPorTitulo(req, res) {
+  try {
+    const { titulo } = req.params;
+
+    if (!validarTexto(titulo)) {
+      return res.status(400).json({ erro: "Título inválido" });
+    }
+
+    const filmes = await FilmeModel.buscarPorTitulo(titulo);
+    return res.json(filmes);
+  } catch (error) {
+    console.error("Erro ao buscar filmes por título:", error);
+    return res.status(500).json({ erro: "Erro interno ao buscar filmes por título" });
+  }
+}
+
 export async function criar(req, res) {
   try {
-    const erros = validarCamposFilme(req.body, { obrigatorioTitulo: true });
+    const erros = validarCamposFilme(req.body, {
+      obrigatorios: ["titulo", "genero", "diretor", "anoLancamento", "duracao", "classificacao"]
+    });
 
     if (erros.length > 0) {
-      return res.status(400).json({ erro: erros.join(", ") });
+      return res.status(400).json({ erros });
     }
 
     const dados = montarDadosFilme(req.body);
@@ -163,7 +256,7 @@ export async function atualizar(req, res) {
     }
 
     if (erros.length > 0) {
-      return res.status(400).json({ erro: erros.join(", ") });
+      return res.status(400).json({ erros });
     }
 
     const filmeAtualizado = await FilmeModel.atualizar(id, dados);

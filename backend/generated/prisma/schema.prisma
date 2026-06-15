@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client-js"
   output   = "../generated/prisma"
@@ -13,37 +8,22 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Modelo de Tarefa
-model Tarefa {
-  id        Int      @id @default(autoincrement())
-  descricao String
-  concluida Boolean  @default(false)
-  createdAt DateTime @default(now())
-
-  // Relacionamento com Categoria
-  categoriaId Int?
-  categoria   Categoria? @relation(fields: [categoriaId], references: [id])
-}
-
-// Modelo de Categoria (Flexibilidade de temas)
-model Categoria {
-  id      Int      @id @default(autoincrement())
-  nome    String   @unique
-  tarefas Tarefa[]
-}
-
-// Modelo de Filme — melhores filmes com informações completas
-model Filme {
+// Modelo de Filme — Sistema PedroCine
+model Movie {
   id            Int      @id @default(autoincrement())
-  titulo        String
-  genero        String?
-  diretor       String?
-  anoLancamento Int?
+  titulo        String   @db.VarChar(255)
+  genero        String   @db.VarChar(100)
   descricao     String?  @db.LongText
-  nota          Float?
-  duracao       Int? // em minutos
-  atorPrincipal String?
-  pais          String?
-  criadoEm      DateTime @default(now())
-  atualizadoEm  DateTime @updatedAt
+  diretor       String   @db.VarChar(255)
+  elenco        String?  @db.LongText
+  duracao       Int // em minutos
+  anoLancamento Int
+  classificacao String   @db.VarChar(50)
+  imagem        String?  @db.LongText
+  nota          Float    @default(0)
+  disponivel    Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("movies")
 }

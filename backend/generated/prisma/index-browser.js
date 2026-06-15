@@ -122,32 +122,21 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
-exports.Prisma.TarefaScalarFieldEnum = {
-  id: 'id',
-  descricao: 'descricao',
-  concluida: 'concluida',
-  createdAt: 'createdAt',
-  categoriaId: 'categoriaId'
-};
-
-exports.Prisma.CategoriaScalarFieldEnum = {
-  id: 'id',
-  nome: 'nome'
-};
-
-exports.Prisma.FilmeScalarFieldEnum = {
+exports.Prisma.MovieScalarFieldEnum = {
   id: 'id',
   titulo: 'titulo',
   genero: 'genero',
-  diretor: 'diretor',
-  anoLancamento: 'anoLancamento',
   descricao: 'descricao',
-  nota: 'nota',
+  diretor: 'diretor',
+  elenco: 'elenco',
   duracao: 'duracao',
-  atorPrincipal: 'atorPrincipal',
-  pais: 'pais',
-  criadoEm: 'criadoEm',
-  atualizadoEm: 'atualizadoEm'
+  anoLancamento: 'anoLancamento',
+  classificacao: 'classificacao',
+  imagem: 'imagem',
+  nota: 'nota',
+  disponivel: 'disponivel',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -162,9 +151,7 @@ exports.Prisma.NullsOrder = {
 
 
 exports.Prisma.ModelName = {
-  Tarefa: 'Tarefa',
-  Categoria: 'Categoria',
-  Filme: 'Filme'
+  Movie: 'Movie'
 };
 
 /**
