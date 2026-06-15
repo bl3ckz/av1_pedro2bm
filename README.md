@@ -480,18 +480,6 @@ O projeto é totalmente responsivo e funciona perfeitamente em:
 - ✅ Tablet (768px - 1023px)
 - ✅ Mobile (até 767px)
 
-## 🎯 Próximos Passos (Futuras Melhorias)
-
-- [ ] Autenticação de usuários
-- [ ] Sistema de comentários
-- [ ] Listas de desejos
-- [ ] Recomendações baseadas em gênero
-- [ ] Upload de imagens
-- [ ] Paginação avançada
-- [ ] Dashboard admin
-- [ ] Dark/Light theme toggle
-- [ ] Testes automatizados
-
 ## 📄 Licença
 
 Este projeto é licenciado sob a MIT License - veja o arquivo LICENSE para detalhes.
